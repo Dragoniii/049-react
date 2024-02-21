@@ -1,13 +1,47 @@
-import { Link } from 'react-router-dom'
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+const Login = () => {
+  const [nome, setNome] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const navigate = useNavigate();
 
-function Login() {
-    return (
-      <div className="conteudo">
-        <h1>Formulário de login aqui</h1>
-        <Link to="/homepage">Ir para Homepage</Link>
-      </div>
-    )
-  }
-  
-  export default Login
-  
+  const EfetuarLogin = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/usuarios");
+      const usuarios = response.data;
+      const usuarioEncontrado = usuarios.find(
+        (usuario) => usuario.nome === nome && usuario.senha === senha
+      );
+      if (usuarioEncontrado) {
+        navigate("/admin");
+      } else {
+        setErro("Nome ou senha inválido");
+      }
+    } catch (error) {
+      console.error("Erro ao buscar eventos", error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Login</h1>
+      <input
+        type="text"
+        placeholder="Nome"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
+      <input
+        type="password"
+        placeholder="Senha"
+        value={senha}
+        onChange={(e) => setSenha(e.target.value)}
+      />
+      <button onClick={EfetuarLogin}>Entrar</button>
+      {erro && <p>{erro}</p>}
+    </div>
+  );
+};
+export default Login;
