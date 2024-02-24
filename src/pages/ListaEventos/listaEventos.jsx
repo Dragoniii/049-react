@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import Cabecalho from "../../components/Cabecalho/cabecalho";
 import Rodape from "../../components/Rodape/rodape";
@@ -20,22 +20,23 @@ import {
 } from "./listaEventos.styles";
 function ListaEventos() {
   const [eventos, setEventos] = useState([]);
+  const [filtroTitulo, setFiltroTitulo] = useState("");
 
   const excluirEvento = async (id) => {
     try {
       await axios.delete(`http://localhost:3000/eventos/${id}`);
-      const eventosFiltrados = eventos.filter(evento => evento.id !== id);
+      const eventosFiltrados = eventos.filter((evento) => evento.id !== id);
       setEventos(eventosFiltrados);
-      toast.success('Evento removido com sucesso!', {
+      toast.success("Evento removido com sucesso!", {
         position: "top-right",
         autoClose: 2468,
-    });
-  } catch (error) {
-    toast.error('Ocorreu um erro ao deletar a mensagem! ' + error , {
-      position: "top-right",
-      autoClose: 2468,
-  });
-  }
+      });
+    } catch (error) {
+      toast.error("Ocorreu um erro ao deletar a mensagem! " + error, {
+        position: "top-right",
+        autoClose: 2468,
+      });
+    }
   };
 
   useEffect(() => {
@@ -49,11 +50,29 @@ function ListaEventos() {
     };
     listarEventos();
   });
+
+  const eventosFiltrados = useMemo(() => {
+    return eventos.filter((evento) =>
+      evento.titulo.toLowerCase().includes(filtroTitulo.toLowerCase())
+    );
+  }, [eventos, filtroTitulo]);
+
+  const handleInputChange = (e) => {
+    setFiltroTitulo(e.target.value);
+  };
+
   return (
     <>
       <Cabecalho />{" "}
       <ListaContainer>
         <ListaTitulo>Lista de Eventos cadastrados</ListaTitulo>
+        <input
+                    type="text"
+                    placeholder="Procure por eventos"
+                    value={filtroTitulo}
+                    onChange={handleInputChange}
+                />
+
         <Tabela>
           <CabecalhoTabela>
             <CabecalhoLinha>
@@ -66,7 +85,7 @@ function ListaEventos() {
             </CabecalhoLinha>
           </CabecalhoTabela>
           <CorpoTabela>
-            {eventos.map((evento, index) => (
+          { eventosFiltrados.map((evento, index) => (
               <Evento key={index}>
                 <EventoItem>{evento.titulo}</EventoItem>
                 <EventoItem>
@@ -74,7 +93,10 @@ function ListaEventos() {
                 </EventoItem>
                 <EventoItem>{evento.preco}</EventoItem>
                 <EventoItem>{evento.url_da_imagem}</EventoItem>
-                <EventoItem>{ evento.evento_privado ? 'Sim' : 'Não' }</EventoItem>                <EventoItem>
+                <EventoItem>
+                  {evento.evento_privado ? "Sim" : "Não"}
+                </EventoItem>{" "}
+                <EventoItem>
                   <BotaoRemover
                     onClick={() => {
                       excluirEvento(evento.id);
