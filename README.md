@@ -2,6 +2,9 @@
 
 ![Print da Homepage](https://i.ibb.co/0BLwdMW/Screenshot-2024-02-19-at-16-30-28.png)
 
+## ACESSO
+https://049-react-dragoniii.vercel.app/
+
 ## Tecnologias Utilizadas
 
 - React
