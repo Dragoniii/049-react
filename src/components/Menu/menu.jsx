@@ -35,6 +35,10 @@ function Menu() {
         </MenuItem>
         <MenuItem>
           <MenuLink to="/contato">Contato</MenuLink>
+          <MenuLink to="/login">Login</MenuLink>
+          <MenuLink to="/admin">Lista de Eventos</MenuLink>
+          <MenuLink to="/adicionar-evento">Adicionar</MenuLink>
+          <MenuLink to="/exercicios">Outros</MenuLink>
         </MenuItem>
       </MenuList>
     </MenuContainer>
