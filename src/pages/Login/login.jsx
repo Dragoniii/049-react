@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import {
   LoginContainer,
@@ -16,8 +18,7 @@ import {
   Sidebar,
   SidebarContainer,
   LogoContainer,
-  Logo,
-  ErrorMessage,
+  Logo
 } from "./login.styles";
 
 const Login = () => {
@@ -26,7 +27,6 @@ const Login = () => {
   // AQUI FICAM MINHAS DECLARAÇÕES DE HOOKS
   const [nome, setNome] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
   const navigate = useNavigate();
   // FUNÇÃO PARA CONSULTAR API E VERIFICAR SE USUÁRIO E SENHA ESTÃO CORRETOS
   const EfetuarLogin = async () => {
@@ -39,9 +39,19 @@ const Login = () => {
         (usuario) => usuario.nome === nome && usuario.senha === senha
       );
       if (usuarioEncontrado) {
-        navigate("/admin");
+        toast.success('Login efetuado com sucesso!', {
+          position: "top-right",
+          autoClose: 981,
+      });
+      setTimeout(() => {
+          navigate('/admin');
+      }, 3210);
+
       } else {
-        setErro("Nome ou senha inválido");
+        toast.error('Nome ou senha inválidos', {
+          position: "top-right",
+          autoClose: 3210,
+      });
       }
     } catch (error) {
       console.error("Erro ao buscar eventos", error);
@@ -83,7 +93,7 @@ const Login = () => {
             <FormItem>
               <FormButton onClick={EfetuarLogin}>Entrar</FormButton>
             </FormItem>
-            {erro && <ErrorMessage>{erro}</ErrorMessage>}
+            <ToastContainer />
           </FormBox>
         </LoginBox>
       </LoginContent>

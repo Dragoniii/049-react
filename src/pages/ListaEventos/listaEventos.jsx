@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import Cabecalho from "../../components/Cabecalho/cabecalho";
 import Rodape from "../../components/Rodape/rodape";
@@ -20,7 +22,20 @@ function ListaEventos() {
   const [eventos, setEventos] = useState([]);
 
   const excluirEvento = async (id) => {
-    console.log(id);
+    try {
+      await axios.delete(`http://localhost:3000/eventos/${id}`);
+      const eventosFiltrados = eventos.filter(evento => evento.id !== id);
+      setEventos(eventosFiltrados);
+      toast.success('Evento removido com sucesso!', {
+        position: "top-right",
+        autoClose: 2468,
+    });
+  } catch (error) {
+    toast.error('Ocorreu um erro ao deletar a mensagem! ' + error , {
+      position: "top-right",
+      autoClose: 2468,
+  });
+  }
   };
 
   useEffect(() => {
@@ -36,8 +51,7 @@ function ListaEventos() {
   });
   return (
     <>
-      <Cabecalho />
-
+      <Cabecalho />{" "}
       <ListaContainer>
         <ListaTitulo>Lista de Eventos cadastrados</ListaTitulo>
         <Tabela>
@@ -60,8 +74,7 @@ function ListaEventos() {
                 </EventoItem>
                 <EventoItem>{evento.preco}</EventoItem>
                 <EventoItem>{evento.url_da_imagem}</EventoItem>
-                <EventoItem>{evento.esta_privado}</EventoItem>
-                <EventoItem>
+                <EventoItem>{ evento.evento_privado ? 'Sim' : 'Não' }</EventoItem>                <EventoItem>
                   <BotaoRemover
                     onClick={() => {
                       excluirEvento(evento.id);
@@ -74,6 +87,7 @@ function ListaEventos() {
             ))}
           </CorpoTabela>
         </Tabela>
+        <ToastContainer />
       </ListaContainer>
       <Rodape />
     </>
